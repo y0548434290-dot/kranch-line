@@ -684,6 +684,7 @@ class OrdersSheetClient {
 
     isRecordingField(key) {
         return [
+            'lastNameRecording',
             'hebrewNameRecording',
             'englishLettersRecording',
             'englishNameRecording'
