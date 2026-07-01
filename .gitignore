@@ -1,0 +1,21 @@
+# סודות — לעולם לא לפרסם
+.env
+.env.*
+ENV5
+*.local.txt
+vercel-token*.txt
+config/google-credentials.json
+
+# תלויות ובנייה
+node_modules/
+.vercel/
+
+# לוגים, גיבויים, קבצים זמניים
+logs/
+*.log
+uploads/
+public/audio/
+
+# כלים
+.claude/
+.DS_Store

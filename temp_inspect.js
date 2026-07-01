@@ -1,0 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+const name = 'קו טלפוני למערכת הזמנות עטיפות.docxאפיון 3.pdf';
+console.log('name', name);
+console.log('extname', path.extname(name));
+const stat = fs.statSync(name);
+console.log('size', stat.size);
+const buf = fs.readFileSync(name, {encoding: null, start: 0, end: 64});
+console.log('first bytes', buf.toString('hex'));
+console.log('first chars', buf.toString('ascii', 0, 20));

@@ -1,0 +1,250 @@
+{
+  "name": "Kranch - Google Sheets Order Email Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "1",
+      "name": "Every Minute",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": "PUT_SPREADSHEET_ID_HERE",
+        "sheetName": "הזמנות",
+        "options": {
+          "returnAll": true,
+          "includeRowNumbers": true
+        }
+      },
+      "id": "2",
+      "name": "Read Orders Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        460,
+        320
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const email = String($json['מייל'] || '').trim();\nconst sentAt = String($json['אישור מייל נשלח'] || '').trim();\nconst orderNumber = String($json['מספר הזמנה'] || '').trim();\nconst pickup = String($json['מוקד איסוף מלא'] || '').trim();\nconst model = String($json['מספר דגם'] || '').trim();\nconst books = String($json['כמות חבילות ספרים'] || '0').trim();\nconst notebooks = String($json['כמות חבילות מחברות'] || '0').trim();\nconst englishBooks = String($json['כמות חבילות ספרי אנגלית'] || '0').trim();\nconst englishNotebooks = String($json['כמות חבילות מחברות אנגלית'] || '0').trim();\nconst enteredPhone = String($json['טלפון שהוקש'] || '').trim();\nconst idNumber = String($json['תעודת זהות'] || '').trim();\nconst status = String($json['סטטוס'] || 'התקבלה').trim();\nconst productsSummary = String($json['מוצרים שנבחרו'] || '').trim();\nconst orderSummary = String($json['סיכום הזמנה מלא'] || '').trim();\nconst wantsHebrew = String($json['שם אישי בעברית'] || '').trim();\nconst hebrewName = String($json['הקלטת שם עברי'] || '').trim();\nconst hebrewFont = String($json['גופן עברי'] || '').trim();\nconst hasEnglishLetters = String($json['יש אנגלית בדוגמה'] || '').trim();\nconst englishLetters = String($json['הקלטת אותיות באנגלית'] || '').trim();\nconst wantsEnglishName = String($json['שם אישי לאנגלית'] || '').trim();\nconst englishNameLanguage = String($json['שפת השם באנגלית'] || '').trim();\nconst englishName = String($json['הקלטת שם אנגלי'] || '').trim();\nconst englishFont = String($json['גופן אנגלי'] || '').trim();\n\nconst personalization = [];\nif (wantsHebrew === 'כן') {\n  personalization.push(`שם אישי בעברית: ${hebrewName || 'נבחר'}${hebrewFont ? `, גופן ${hebrewFont}` : ''}`);\n}\nif (hasEnglishLetters === 'כן') {\n  personalization.push(`אותיות באנגלית בדוגמה: ${englishLetters || 'כן'}`);\n}\nif (wantsEnglishName === 'כן') {\n  personalization.push(`שם אישי עבור ספרי אנגלית: ${englishName || 'נבחר שם אישי'}, שפה ${englishNameLanguage || 'לא צוין'}${englishFont ? `, גופן ${englishFont}` : ''}`);\n}\nif (productsSummary) {\n  personalization.push(`מוצרים שנבחרו: ${productsSummary}`);\n}\n\nconst html = `\n<div dir=\"rtl\" style=\"margin:0;padding:32px 16px;background:linear-gradient(180deg,#fff8f1 0%,#fffdfb 100%);font-family:Arial,'Noto Sans Hebrew',sans-serif;color:#3b2c25\">\n  <div style=\"max-width:720px;margin:0 auto;background:#ffffff;border:1px solid #f0d9cb;border-radius:30px;overflow:hidden;box-shadow:0 22px 56px rgba(170,118,105,0.12)\">\n    <div style=\"padding:32px;background:radial-gradient(circle at top right,rgba(212,106,140,0.16),transparent 32%),radial-gradient(circle at bottom left,rgba(239,178,113,0.18),transparent 28%),linear-gradient(135deg,#fff8f4 0%,#fff4ea 100%)\">\n      <div style=\"font-size:15px;font-weight:700;color:#b55a7b;margin-bottom:10px\">קראנץ</div>\n      <div style=\"font-size:28px;font-weight:800;line-height:1.2;margin-bottom:10px\">ההזמנה שלך התקבלה בהצלחה</div>\n      <div style=\"font-size:16px;line-height:1.8;color:#7b6258\">ריכזנו עבורך כאן את פרטי ההזמנה, לפי הבחירות והכמויות שנשמרו עבורך.</div>\n    </div>\n    <div style=\"padding:28px 32px 18px\">\n      <div style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px\">\n        ${[\n          ['מספר הזמנה', orderNumber],\n          ['סטטוס', status],\n          ['מוקד איסוף', pickup],\n          ['טלפון', enteredPhone],\n          ['תעודת זהות', idNumber],\n          ['דגם', model]\n        ].filter(([, value]) => value).map(([label, value]) => `\n          <div style=\"padding:14px 16px;border-radius:18px;background:#fffaf6;border:1px solid #f3dfd4\">\n            <div style=\"font-size:13px;color:#9b7b6f;margin-bottom:6px\">${label}</div>\n            <div style=\"font-size:17px;font-weight:700;color:#44312a\">${value}</div>\n          </div>\n        `).join('')}\n      </div>\n    </div>\n    <div style=\"padding:0 32px 12px\">\n      <div style=\"font-size:21px;font-weight:800;margin-bottom:14px\">פירוט הכמויות</div>\n      <div style=\"display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px\">\n        ${[\n          ['חבילות ספרים', books],\n          ['חבילות מחברות', notebooks],\n          ['ספרי אנגלית', englishBooks],\n          ['מחברות אנגלית', englishNotebooks]\n        ].map(([label, value]) => `\n          <div style=\"padding:16px 12px;border-radius:20px;background:linear-gradient(180deg,#fff7f0,#fffdfb);border:1px solid #f3dfd4;text-align:center\">\n            <div style=\"font-size:14px;color:#8f7066;margin-bottom:8px\">${label}</div>\n            <div style=\"font-size:24px;font-weight:800;color:#c0587d\">${value}</div>\n          </div>\n        `).join('')}\n      </div>\n    </div>\n    <div style=\"padding:12px 32px 0\">\n      <div style=\"border-radius:24px;background:#fffaf6;border:1px solid #f3dfd4;padding:20px 22px\">\n        <div style=\"font-size:21px;font-weight:800;margin-bottom:12px\">התאמות אישיות שנבחרו</div>\n        ${personalization.length ? `<ul style=\"margin:0;padding:0 18px 0 0;color:#5a473e;line-height:1.95\">${personalization.map((item) => `<li>${item}</li>`).join('')}</ul>` : `<div style=\"color:#7f665d;line-height:1.8\">לא נבחרו התאמות אישיות מיוחדות להזמנה זו.</div>`}\n      </div>\n    </div>\n    <div style=\"padding:20px 32px 32px\">\n      <div style=\"border-radius:24px;background:linear-gradient(135deg,#fff2ec,#fff9f4);border:1px solid #f0ddd1;padding:20px 22px\">\n        <div style=\"font-size:18px;font-weight:800;margin-bottom:8px\">סיכום הזמנה מלא</div>\n        <div style=\"color:#6f5a51;line-height:1.9\">${orderSummary || productsSummary || ''}</div>\n      </div>\n      <div style=\"margin-top:18px;font-size:14px;color:#8b7166;line-height:1.8\">תודה שבחרת בקראנץ. נשמח לשרת אותך גם בהזמנות הבאות.</div>\n    </div>\n  </div>\n</div>`;\n\nreturn {\n  ...$json,\n  email,\n  orderNumber,\n  shouldSend: Boolean(email) && !sentAt,\n  html,\n  sentAtValue: new Date().toISOString(),\n  sentStatusValue: 'נשלח',\n  rowNumber: $json.rowNumber || $json._rowNumber || ''\n};"
+      },
+      "id": "3",
+      "name": "Build Email HTML",
+      "type": "n8n-nodes-base.functionItem",
+      "typeVersion": 1,
+      "position": [
+        700,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json[\"shouldSend\"]}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "4",
+      "name": "Has Email And Not Sent",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        940,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{$json[\"email\"]}}",
+        "subject": "={{`אישור הזמנה - ${$json[\"orderNumber\"]}`}}",
+        "emailType": "html",
+        "message": "={{$json[\"html\"]}}",
+        "options": {}
+      },
+      "id": "5",
+      "name": "Send Gmail Summary",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        240
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": false,
+        "values": {
+          "string": [
+            {
+              "name": "מספר הזמנה",
+              "value": "={{$json[\"orderNumber\"]}}"
+            },
+            {
+              "name": "אישור מייל נשלח",
+              "value": "={{$json[\"sentAtValue\"]}}"
+            },
+            {
+              "name": "סטטוס שליחת מייל",
+              "value": "={{$json[\"sentStatusValue\"]}}"
+            }
+          ]
+        }
+      },
+      "id": "6",
+      "name": "Prepare Sheet Update",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1420,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": "PUT_SPREADSHEET_ID_HERE",
+        "sheetName": "הזמנות",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "מספר הזמנה": "={{$json[\"מספר הזמנה\"]}}",
+            "אישור מייל נשלח": "={{$json[\"אישור מייל נשלח\"]}}",
+            "סטטוס שליחת מייל": "={{$json[\"סטטוס שליחת מייל\"]}}"
+          },
+          "matchingColumns": [
+            "מספר הזמנה"
+          ]
+        },
+        "options": {
+          "attemptToConvertTypes": false
+        }
+      },
+      "id": "7",
+      "name": "Mark Row As Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1660,
+        240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GOOGLE_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every Minute": {
+      "main": [
+        [
+          {
+            "node": "Read Orders Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Orders Sheet": {
+      "main": [
+        [
+          {
+            "node": "Build Email HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email HTML": {
+      "main": [
+        [
+          {
+            "node": "Has Email And Not Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Email And Not Sent": {
+      "main": [
+        [
+          {
+            "node": "Send Gmail Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Send Gmail Summary": {
+      "main": [
+        [
+          {
+            "node": "Prepare Sheet Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Sheet Update": {
+      "main": [
+        [
+          {
+            "node": "Mark Row As Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "kranch-order-email-v1"
+}

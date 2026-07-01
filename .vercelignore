@@ -1,0 +1,14 @@
+logs
+uploads
+ivr_build
+models
+dist
+coverage
+test
+tests
+*.log
+*.wav
+*.JPG
+*.jpg
+*.pdf
+*.msi

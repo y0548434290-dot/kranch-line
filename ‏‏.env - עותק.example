@@ -1,0 +1,36 @@
+# הגדרות מערכת Yemot Hamashiach
+
+# מסד נתונים PostgreSQL
+DATABASE_URL=postgresql://username:password@localhost:5432/yemot_system
+
+# Yemot API - יש למלא עם הפרטים האמיתיים שלך
+YEMOT_USERNAME=השם_משתמש_שלך_בימות
+YEMOT_PASSWORD=הסיסמה_שלך_בימות
+YEMOT_SERVER=ym
+
+# Google Sheets API
+GOOGLE_SHEETS_CREDENTIALS_PATH=./config/google-credentials.json
+GOOGLE_SHEETS_SPREADSHEET_ID=מזהה_הגיליון_שלך
+
+# שרת
+PORT=3000
+NODE_ENV=development
+
+# JWT לאימות (לשלב מאוחר יותר)
+JWT_SECRET=your_jwt_secret_key_here_generate_random_string
+
+# לוגים
+LOG_LEVEL=info
+
+# קבצים
+UPLOAD_PATH=./uploads/
+AUDIO_PATH=./public/audio/
+
+# הגדרות IVR
+DEFAULT_TIMEOUT=30
+MAX_ATTEMPTS=3
+SILENCE_TIMEOUT=3
+
+# הגדרות נוספות
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123

@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>טופס הזמנה - קראנץ</title>
+    <style>
+        :root {
+            --cream: #fff9f3;
+            --paper: rgba(255, 255, 255, 0.9);
+            --paper-strong: rgba(255, 255, 255, 0.97);
+            --ink: #3d2b24;
+            --muted: #80655d;
+            --rose: #d46a8c;
+            --rose-deep: #b94f72;
+            --peach: #efb271;
+            --mint: #94cec5;
+            --vanilla: #fff1dc;
+            --line: rgba(212, 106, 140, 0.18);
+            --shadow: 0 30px 90px rgba(128, 88, 77, 0.14);
+            --radius-xl: 36px;
+            --radius-lg: 26px;
+            --radius-md: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Assistant", "Noto Sans Hebrew", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top right, rgba(212, 106, 140, 0.18), transparent 26%),
+                radial-gradient(circle at 12% 18%, rgba(148, 206, 197, 0.22), transparent 20%),
+                radial-gradient(circle at bottom left, rgba(239, 178, 113, 0.22), transparent 24%),
+                linear-gradient(180deg, #fffdf9 0%, #fff6ed 52%, #fffaf5 100%);
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            z-index: 0;
+            inset: auto;
+            pointer-events: none;
+            opacity: 0.45;
+            filter: blur(0.4px);
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-image: url("/form-assets/kranch-logo.jpg");
+        }
+
+        body::before {
+            top: 26px;
+            left: -26px;
+            width: 240px;
+            height: 240px;
+            transform: rotate(-12deg);
+        }
+
+        body::after {
+            bottom: 30px;
+            right: -40px;
+            width: 280px;
+            height: 280px;
+            opacity: 0.22;
+            transform: rotate(11deg);
+        }
+
+        .shell {
+            position: relative;
+            z-index: 1;
+            max-width: 1220px;
+            margin: 0 auto;
+            padding: 26px 18px 52px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 18px;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.52);
+            box-shadow: 0 16px 40px rgba(150, 104, 92, 0.08);
+            backdrop-filter: blur(14px);
+        }
+
+        .brand-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+
+        .brand-mini img {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 12px 24px rgba(185, 79, 114, 0.18);
+        }
+
+        .topbar-note {
+            color: var(--muted);
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .hero {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+            gap: 22px;
+            margin-bottom: 24px;
+        }
+
+        .panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            background: var(--paper);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero-copy {
+            padding: 42px 38px 34px;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 28%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(255, 247, 239, 0.93));
+        }
+
+        .hero-copy::after {
+            content: "";
+            position: absolute;
+            left: -48px;
+            bottom: -48px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(148, 206, 197, 0.24), transparent 70%);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid rgba(212, 106, 140, 0.18);
+            color: var(--rose-deep);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--rose), var(--peach));
+            box-shadow: 0 0 0 6px rgba(212, 106, 140, 0.08);
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+            font-family: "Noto Serif Hebrew", serif;
+        }
+
+        h1 {
+            max-width: 11ch;
+            font-size: clamp(2.35rem, 5vw, 4.6rem);
+            line-height: 1.02;
+        }
+
+        .lead {
+            margin: 18px 0 22px;
+            max-width: 620px;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.85;
+        }
+
+        .feature-row,
+        .promise-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .feature,
+        .promise {
+            padding: 12px 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(212, 106, 140, 0.14);
+            box-shadow: 0 12px 30px rgba(168, 115, 98, 0.08);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .hero-art {
+            padding: 28px;
+            background:
+                linear-gradient(160deg, rgba(255, 250, 243, 0.98), rgba(255, 244, 232, 0.92)),
+                radial-gradient(circle at top right, rgba(212, 106, 140, 0.12), transparent 30%);
+        }
+
+        .hero-stack {
+            position: relative;
+            min-height: 100%;
+            display: grid;
+            gap: 18px;
+        }
+
+        .logo-stage {
+            position: relative;
+            display: grid;
+            place-items: center;
+            min-height: 290px;
+            padding: 28px;
+            border-radius: 30px;
+            background:
+                linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 238, 0.86)),
+                radial-gradient(circle at top right, rgba(239, 178, 113, 0.18), transparent 34%);
+            border: 1px solid rgba(212, 106, 140, 0.14);
+        }
+
+        .logo-stage::before,
+        .logo-stage::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            background-image: url("/form-assets/kranch-logo.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            box-shadow: 0 18px 44px rgba(162, 104, 103, 0.14);
+        }
+
+        .logo-stage::before {
+            top: 18px;
+            left: 22px;
+            width: 82px;
+            height: 82px;
+            transform: rotate(-8deg);
+        }
+
+        .logo-stage::after {
+            right: 18px;
+            bottom: 18px;
+            width: 96px;
+            height: 96px;
+            opacity: 0.8;
+            transform: rotate(10deg);
+        }
+
+        .logo-main {
+            position: relative;
+            z-index: 1;
+            width: min(100%, 320px);
+            border-radius: 30px;
+            background: linear-gradient(180deg, #fffefc, #fff7ee);
+            box-shadow:
+                0 26px 50px rgba(139, 94, 83, 0.16),
+                inset 0 1px 0 rgba(255, 255, 255, 0.92);
+            padding: 18px;
+        }
+
+        .logo-main img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+        }
+
+        .hero-note {
+            display: grid;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(212, 106, 140, 0.12);
+        }
+
+        .hero-note strong {
+            font-size: 18px;
+        }
+
+        .hero-note p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(290px, 0.72fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .form-card {
+            padding: 30px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-head p {
+            margin: 10px 0 0;
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .section-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 18px;
+            background: rgba(255, 247, 241, 0.86);
+            border: 1px solid rgba(212, 106, 140, 0.12);
+            white-space: nowrap;
+        }
+
+        .section-brand img {
+            width: 44px;
+            height: 44px;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        .soft-card {
+            margin-bottom: 18px;
+            padding: 18px;
+            border-radius: 24px;
+            background:
+                linear-gradient(180deg, rgba(255, 252, 248, 0.96), rgba(255, 248, 242, 0.92));
+            border: 1px solid rgba(212, 106, 140, 0.12);
+        }
+
+        .soft-card h3 {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .soft-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .grid,
+        .grid-3 {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .field,
+        .full {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .field-note {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px 16px;
+            border: 1px solid rgba(205, 166, 153, 0.38);
+            border-radius: var(--radius-md);
+            background: var(--paper-strong);
+            color: var(--ink);
+            font: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #b59a90;
+        }
+
+        textarea {
+            min-height: 112px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: rgba(212, 106, 140, 0.65);
+            box-shadow: 0 0 0 4px rgba(212, 106, 140, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            height: 1px;
+            margin: 22px 0;
+            background: linear-gradient(90deg, transparent, rgba(212, 106, 140, 0.18), transparent);
+        }
+
+        .choice {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .choice label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(212, 106, 140, 0.13);
+            box-shadow: 0 10px 24px rgba(159, 106, 91, 0.06);
+            cursor: pointer;
+        }
+
+        .choice input {
+            width: auto;
+            margin: 0;
+            accent-color: var(--rose);
+        }
+
+        .sidebar {
+            display: grid;
+            gap: 18px;
+        }
+
+        .info-card,
+        .summary-card,
+        .success {
+            padding: 24px;
+        }
+
+        .info-card {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 238, 0.88));
+        }
+
+        .info-card h3,
+        .summary-card h3,
+        .success h2 {
+            margin-bottom: 12px;
+        }
+
+        .info-list,
+        .summary-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .info-item,
+        .summary-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid rgba(212, 106, 140, 0.11);
+        }
+
+        .info-item strong,
+        .summary-item strong {
+            font-size: 14px;
+        }
+
+        .summary-card {
+            position: sticky;
+            top: 18px;
+            overflow: hidden;
+        }
+
+        .summary-card::after {
+            content: "";
+            position: absolute;
+            left: -40px;
+            bottom: -46px;
+            width: 170px;
+            height: 170px;
+            background: url("/form-assets/kranch-logo.jpg") center/contain no-repeat;
+            opacity: 0.12;
+            transform: rotate(-14deg);
+            pointer-events: none;
+        }
+
+        .summary-card p,
+        .success p,
+        .status-text,
+        .hint {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .summary-value {
+            color: var(--rose-deep);
+            font-weight: 800;
+        }
+
+        .mini-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 244, 237, 0.92);
+            color: var(--rose-deep);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        button {
+            min-width: 220px;
+            padding: 16px 24px;
+            border: 0;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--rose), var(--peach));
+            color: #fff;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 20px 38px rgba(212, 106, 140, 0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 24px 44px rgba(212, 106, 140, 0.26);
+        }
+
+        button:disabled {
+            opacity: 0.76;
+            cursor: wait;
+            transform: none;
+        }
+
+        .error {
+            margin-top: 12px;
+            color: #b53f66;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .success {
+            display: none;
+            border-radius: var(--radius-lg);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 255, 252, 0.92));
+            border: 1px solid rgba(148, 206, 197, 0.36);
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        .success img {
+            width: 78px;
+            height: 78px;
+            object-fit: cover;
+            border-radius: 22px;
+            margin-bottom: 12px;
+            box-shadow: 0 12px 28px rgba(148, 206, 197, 0.18);
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 760px) {
+            body::before,
+            body::after {
+                display: none;
+            }
+
+            .shell {
+                padding-inline: 14px;
+            }
+
+            .topbar,
+            .section-head,
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .topbar-note {
+                text-align: right;
+            }
+
+            .hero-copy,
+            .hero-art,
+            .form-card,
+            .info-card,
+            .summary-card,
+            .success {
+                padding: 22px;
+            }
+
+            .grid,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                max-width: none;
+                font-size: 2.55rem;
+            }
+
+            .logo-stage {
+                min-height: 240px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <div class="topbar">
+            <div class="brand-mini">
+                <img src="/form-assets/kranch-logo.jpg" alt="לוגו קראנץ">
+                <div>
+                    <div>קראנץ</div>
+                    <div class="hint">טופס הזמנה נעים, פשוט ומזמין</div>
+                </div>
+            </div>
+        </div>
+
+        <section class="hero">
+            <div class="panel hero-copy">
+                <div class="eyebrow">חוויית הזמנה רכה, מסודרת ונוחה לעין</div>
+                <h1>מזמינים בקראנץ בנעימות, במהירות ועם תחושה טובה</h1>
+                <p class="lead">
+                    ריכזנו כאן את כל פרטי ההזמנה בטופס אחד ברור ונעים. אפשר למלא בנחת, לבחור את פרטי האיסוף,
+                    להוסיף התאמות אישיות, ולשלוח הכל ישירות למערכת בלי בלבול ובלי מאמץ.
+                </p>
+                <div class="feature-row">
+                    <div class="feature">מספר הזמנה לפי תעודת זהות</div>
+                    <div class="feature">שמירה ישירה לגיליון ההזמנות</div>
+                </div>
+                <div class="promise-row" style="margin-top: 14px;">
+                    <div class="promise">עיצוב רגוע ונעים לעין</div>
+                    <div class="promise">מותאם גם לנייד</div>
+                    <div class="promise">מרכז את כל פרטי ההזמנה במקום אחד</div>
+                </div>
+            </div>
+
+            <div class="panel hero-art">
+                <div class="hero-stack">
+                    <div class="logo-stage">
+                        <div class="logo-main">
+                            <img src="/form-assets/kranch-logo.jpg" alt="לוגו קראנץ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="layout">
+            <div class="panel form-card">
+                <div class="section-head">
+                    <div>
+                        <h2>טופס ההזמנה</h2>
+                        <p>ממלאים את הפרטים לפי הסדר, בוחרים את האפשרויות הרצויות, ושולחים ישירות למערכת.</p>
+                    </div>
+                    <div class="section-brand">
+                        <img src="/form-assets/kranch-logo.jpg" alt="">
+                        <div>
+                            <strong>קראנץ</strong>
+                            <div class="hint">הזמנה עם אווירה נעימה</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="soft-card">
+                    <h3>פרטים אישיים</h3>
+                    <p>מלאי כאן את הפרטים האישיים בצורה ברורה ונוחה.</p>
+                </div>
+
+                <form id="orderForm">
+                    <div class="grid">
+                        <div class="field">
+                            <label for="enteredPhone">מספר טלפון</label>
+                            <input id="enteredPhone" name="enteredPhone" inputmode="numeric" placeholder="0500000000" required>
+                        </div>
+                        <div class="field">
+                            <label for="idNumber">תעודת זהות</label>
+                            <input id="idNumber" name="idNumber" inputmode="numeric" placeholder="123456789" required>
+                        </div>
+                        <div class="full">
+                            <label for="email">כתובת מייל לאישור הזמנה</label>
+                            <input id="email" name="email" type="email" placeholder="name@example.com">
+                            <div class="field-note">לא חובה, אבל אם תמלאי כתובת מייל ניתן יהיה לשלוח אישור הזמנה בהתאם להגדרות המערכת.</div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="soft-card">
+                        <h3>איסוף ודגם</h3>
+                        <p>כאן בוחרים את מוקד האיסוף ואת מספר הדגם של המוצר המבוקש.</p>
+                    </div>
+
+                    <div class="grid">
+                        <div class="field">
+                            <label for="pickupCityKey">מוקד איסוף</label>
+                            <select id="pickupCityKey" name="pickupCityKey" required>
+                                <option value="">בחרי מוקד</option>
+                                <option value="1">ירושלים</option>
+                                <option value="2">בני ברק</option>
+                                <option value="3">אשדוד רובע ז'</option>
+                                <option value="4">אלעד</option>
+                                <option value="5">בית שמש רמה ב'</option>
+                                <option value="6">ביתר עילית</option>
+                                <option value="7">חיפה</option>
+                                <option value="8">מודיעין עילית</option>
+                            </select>
+                        </div>
+                        <div class="field" id="pickupAreaWrap" style="display:none">
+                            <label for="pickupAreaKey">אזור</label>
+                            <select id="pickupAreaKey" name="pickupAreaKey"></select>
+                        </div>
+                        <div class="field">
+                            <label for="productModel">מספר דגם</label>
+                            <input id="productModel" name="productModel" placeholder="למשל 103" required>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="soft-card">
+                        <h3>כמויות</h3>
+                        <p>אפשר לעדכן כאן את מספר החבילות בכל קטגוריה. הסיכום מתעדכן גם בצד הדף.</p>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="field">
+                            <label for="booksQuantity">חבילות ספרים</label>
+                            <input id="booksQuantity" name="booksQuantity" type="number" min="0" value="1" required>
+                        </div>
+                        <div class="field">
+                            <label for="notebooksQuantity">חבילות מחברות</label>
+                            <input id="notebooksQuantity" name="notebooksQuantity" type="number" min="0" value="0" required>
+                        </div>
+                        <div class="field">
+                            <label for="englishBooksQuantity">חבילות ספרי אנגלית</label>
+                            <input id="englishBooksQuantity" name="englishBooksQuantity" type="number" min="0" value="0" required>
+                        </div>
+                    </div>
+
+                    <div class="grid-3" style="margin-top:16px">
+                        <div class="field">
+                            <label for="englishNotebooksQuantity">חבילות מחברות אנגלית</label>
+                            <input id="englishNotebooksQuantity" name="englishNotebooksQuantity" type="number" min="0" value="0" required>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="soft-card">
+                        <h3>שם אישי בעברית</h3>
+                        <p>אם יש צורך בשם אישי, אפשר לציין אותו כאן יחד עם פרטי הגופן והאותיות באנגלית בדוגמה.</p>
+                    </div>
+
+                    <div class="full">
+                        <label>שם אישי בעברית</label>
+                        <div class="choice">
+                            <label><input type="radio" name="wantsHebrewName" value="1">כן</label>
+                            <label><input type="radio" name="wantsHebrewName" value="2" checked>לא</label>
+                        </div>
+                    </div>
+
+                    <div id="hebrewNameSection" style="display:none; margin-top:16px;">
+                        <div class="grid">
+                            <div class="full">
+                                <label for="hebrewNameText">השם בעברית</label>
+                                <textarea id="hebrewNameText" name="hebrewNameText" placeholder="כתבי את השם כפי שתרצי שיופיע"></textarea>
+                            </div>
+                            <div class="field">
+                                <label for="hebrewFont">מספר גופן עברי</label>
+                                <input id="hebrewFont" name="hebrewFont" placeholder="למשל 12">
+                            </div>
+                        </div>
+
+                        <div class="full" style="margin-top:16px">
+                            <label>יש בדוגמה אותיות באנגלית</label>
+                            <div class="choice">
+                                <label><input type="radio" name="hasEnglishLetters" value="1">כן</label>
+                                <label><input type="radio" name="hasEnglishLetters" value="2" checked>לא</label>
+                            </div>
+                        </div>
+
+                        <div class="full" id="englishLettersWrap" style="display:none; margin-top:16px">
+                            <label for="englishLettersText">אותיות באנגלית מהדוגמה</label>
+                            <textarea id="englishLettersText" name="englishLettersText" placeholder="אפשר לציין כאן את האותיות או ההבהרה הרצויה"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="soft-card">
+                        <h3>שם אישי עבור ספרי אנגלית</h3>
+                        <p>אם הוזמנו ספרי אנגלית או מחברות אנגלית, ניתן לציין כאן גם את פרטי השם המתאים.</p>
+                    </div>
+
+                    <div class="full">
+                        <label>שם אישי על ספרי או מחברות האנגלית</label>
+                        <div class="choice">
+                            <label><input type="radio" name="wantsEnglishName" value="1">כן</label>
+                            <label><input type="radio" name="wantsEnglishName" value="2" checked>לא</label>
+                        </div>
+                    </div>
+
+                    <div id="englishNameSection" style="display:none; margin-top:16px;">
+                        <div class="full">
+                            <label>שפת השם באנגלית</label>
+                            <div class="choice">
+                                <label><input type="radio" name="englishNameLanguage" value="1" checked>עברית כמו בספרים העבריים</label>
+                                <label><input type="radio" name="englishNameLanguage" value="2">שם באנגלית</label>
+                            </div>
+                        </div>
+
+                        <div class="full" id="englishNameTextWrap" style="display:none; margin-top:16px">
+                            <label for="englishNameText">השם באנגלית</label>
+                            <textarea id="englishNameText" name="englishNameText" placeholder="כתבי את השם כפי שצריך להופיע באנגלית"></textarea>
+                        </div>
+
+                        <div class="field" style="margin-top:16px">
+                            <label for="englishFont">מספר גופן אנגלי</label>
+                            <input id="englishFont" name="englishFont" placeholder="למשל 7">
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <div id="statusText" class="status-text"></div>
+                        <button id="submitBtn" type="submit">שליחת ההזמנה</button>
+                    </div>
+                    <div id="errorText" class="error"></div>
+                </form>
+            </div>
+
+            <aside class="sidebar">
+                <div class="panel info-card">
+                    <div class="mini-badge">הזמנה מסודרת ונעימה</div>
+                    <h3>מה כדאי להכין מראש?</h3>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span>טלפון זמין</span>
+                            <strong>לשמירה תקינה</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>תעודת זהות</span>
+                            <strong>משמשת כמספר הזמנה</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>מספר דגם</span>
+                            <strong>לזיהוי המוצר</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>שמות אישיים</span>
+                            <strong>אם יש צורך בהתאמה</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel summary-card">
+                    <div class="mini-badge">סיכום חי</div>
+                    <h3>סיכום ההזמנה שלך</h3>
+                    <p>הפרטים כאן הם לתצוגה בלבד, כדי לעזור לך לעבור על ההזמנה בנחת לפני השליחה.</p>
+                    <div class="summary-list" style="margin-top: 14px;">
+                        <div class="summary-item">
+                            <span>מוקד איסוף</span>
+                            <strong id="summaryPickup" class="summary-value">עדיין לא נבחר</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>דגם</span>
+                            <strong id="summaryModel" class="summary-value">לא הוזן</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>ספרים</span>
+                            <strong id="summaryBooks" class="summary-value">1</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>מחברות</span>
+                            <strong id="summaryNotebooks" class="summary-value">0</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>ספרי אנגלית</span>
+                            <strong id="summaryEnglishBooks" class="summary-value">0</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>מחברות אנגלית</span>
+                            <strong id="summaryEnglishNotebooks" class="summary-value">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel success" id="successBox">
+                    <img src="/form-assets/kranch-logo.jpg" alt="">
+                    <h2>ההזמנה התקבלה בהצלחה</h2>
+                    <p id="successText"></p>
+                </div>
+            </aside>
+        </section>
+    </div>
+
+    <script>
+        const areaMap = {
+            "1": [
+                { value: "1", label: "אזור בר אילן" },
+                { value: "2", label: "אזור רוממה" }
+            ],
+            "2": [
+                { value: "1", label: "אזור רבי עקיבא" },
+                { value: "2", label: "אזור עזרא" }
+            ]
+        };
+
+        const cityLabels = {
+            "1": "ירושלים",
+            "2": "בני ברק",
+            "3": "אשדוד רובע ז'",
+            "4": "אלעד",
+            "5": "בית שמש רמה ב'",
+            "6": "ביתר עילית",
+            "7": "חיפה",
+            "8": "מודיעין עילית"
+        };
+
+        const citySelect = document.getElementById("pickupCityKey");
+        const areaWrap = document.getElementById("pickupAreaWrap");
+        const areaSelect = document.getElementById("pickupAreaKey");
+        const form = document.getElementById("orderForm");
+        const statusText = document.getElementById("statusText");
+        const errorText = document.getElementById("errorText");
+        const submitBtn = document.getElementById("submitBtn");
+        const successBox = document.getElementById("successBox");
+        const successText = document.getElementById("successText");
+
+        const hebrewNameSection = document.getElementById("hebrewNameSection");
+        const englishLettersWrap = document.getElementById("englishLettersWrap");
+        const englishNameSection = document.getElementById("englishNameSection");
+        const englishNameTextWrap = document.getElementById("englishNameTextWrap");
+
+        const summaryPickup = document.getElementById("summaryPickup");
+        const summaryModel = document.getElementById("summaryModel");
+        const summaryBooks = document.getElementById("summaryBooks");
+        const summaryNotebooks = document.getElementById("summaryNotebooks");
+        const summaryEnglishBooks = document.getElementById("summaryEnglishBooks");
+        const summaryEnglishNotebooks = document.getElementById("summaryEnglishNotebooks");
+
+        citySelect.addEventListener("change", () => {
+            updateAreaOptions();
+            updateSummary();
+        });
+
+        areaSelect.addEventListener("change", updateSummary);
+
+        document.querySelectorAll('input[name="wantsHebrewName"]').forEach((el) => el.addEventListener("change", toggleHebrew));
+        document.querySelectorAll('input[name="hasEnglishLetters"]').forEach((el) => el.addEventListener("change", toggleEnglishLetters));
+        document.querySelectorAll('input[name="wantsEnglishName"]').forEach((el) => el.addEventListener("change", toggleEnglishName));
+        document.querySelectorAll('input[name="englishNameLanguage"]').forEach((el) => el.addEventListener("change", toggleEnglishNameText));
+        document.querySelectorAll("#productModel, #booksQuantity, #notebooksQuantity, #englishBooksQuantity, #englishNotebooksQuantity").forEach((el) => {
+            el.addEventListener("input", updateSummary);
+        });
+
+        function updateAreaOptions() {
+            const areas = areaMap[citySelect.value];
+
+            if (!areas) {
+                areaWrap.style.display = "none";
+                areaSelect.innerHTML = "";
+                updateSummary();
+                return;
+            }
+
+            areaWrap.style.display = "flex";
+            areaSelect.innerHTML = '<option value="">בחרי אזור</option>' + areas
+                .map((area) => `<option value="${area.value}">${area.label}</option>`)
+                .join("");
+        }
+
+        function toggleHebrew() {
+            const active = document.querySelector('input[name="wantsHebrewName"]:checked')?.value === "1";
+            hebrewNameSection.style.display = active ? "block" : "none";
+        }
+
+        function toggleEnglishLetters() {
+            const active = document.querySelector('input[name="hasEnglishLetters"]:checked')?.value === "1";
+            englishLettersWrap.style.display = active ? "block" : "none";
+        }
+
+        function toggleEnglishName() {
+            const active = document.querySelector('input[name="wantsEnglishName"]:checked')?.value === "1";
+            englishNameSection.style.display = active ? "block" : "none";
+
+            if (!active) {
+                englishNameTextWrap.style.display = "none";
+            } else {
+                toggleEnglishNameText();
+            }
+        }
+
+        function toggleEnglishNameText() {
+            const active = document.querySelector('input[name="englishNameLanguage"]:checked')?.value === "2";
+            englishNameTextWrap.style.display = active ? "block" : "none";
+        }
+
+        function updateSummary() {
+            const selectedCity = cityLabels[citySelect.value] || "";
+            const selectedArea = areaMap[citySelect.value]?.find((area) => area.value === areaSelect.value)?.label || "";
+
+            summaryPickup.textContent = selectedCity ? `${selectedCity}${selectedArea ? " - " + selectedArea : ""}` : "עדיין לא נבחר";
+            summaryModel.textContent = document.getElementById("productModel").value.trim() || "לא הוזן";
+            summaryBooks.textContent = document.getElementById("booksQuantity").value || "0";
+            summaryNotebooks.textContent = document.getElementById("notebooksQuantity").value || "0";
+            summaryEnglishBooks.textContent = document.getElementById("englishBooksQuantity").value || "0";
+            summaryEnglishNotebooks.textContent = document.getElementById("englishNotebooksQuantity").value || "0";
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            errorText.textContent = "";
+            submitBtn.disabled = true;
+            statusText.textContent = "שולח את ההזמנה ושומר אותה במערכת...";
+
+            const formData = new FormData(form);
+            const payload = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch("/web-order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error((data.errors && data.errors.join(" | ")) || data.error || "אירעה תקלה");
+                }
+
+                successBox.classList.add("show");
+                successText.textContent = `תודה שבחרת בנו :) מספר ההזמנה שלך הוא ${data.orderNumber}.`;
+                form.reset();
+                areaWrap.style.display = "none";
+                areaSelect.innerHTML = "";
+                hebrewNameSection.style.display = "none";
+                englishLettersWrap.style.display = "none";
+                englishNameSection.style.display = "none";
+                englishNameTextWrap.style.display = "none";
+                statusText.textContent = "מעבירים אותך לעמוד התודה...";
+                updateSummary();
+                window.location.assign(data.thankYouUrl || `/order-thanks?orderNumber=${encodeURIComponent(data.orderNumber)}`);
+            } catch (error) {
+                errorText.textContent = error.message;
+                statusText.textContent = "לא הצלחנו לשמור את ההזמנה. אפשר לנסות שוב.";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        updateSummary();
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>תודה שבחרת בנו - קראנץ</title>
+    <style>
+        :root {
+            --ink: #3d2b24;
+            --muted: #7d665d;
+            --rose: #d46a8c;
+            --peach: #efb271;
+            --mint: #9fd2cb;
+            --paper: rgba(255, 255, 255, 0.92);
+            --line: rgba(212, 106, 140, 0.15);
+            --shadow: 0 30px 90px rgba(128, 88, 77, 0.14);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            font-family: "Assistant", "Noto Sans Hebrew", "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top right, rgba(212, 106, 140, 0.16), transparent 28%),
+                radial-gradient(circle at bottom left, rgba(239, 178, 113, 0.2), transparent 24%),
+                radial-gradient(circle at 18% 18%, rgba(159, 210, 203, 0.22), transparent 22%),
+                linear-gradient(180deg, #fffdf9 0%, #fff5eb 100%);
+        }
+
+        .card {
+            width: min(100%, 760px);
+            padding: 34px 28px;
+            border-radius: 34px;
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            background: var(--paper);
+            box-shadow: var(--shadow);
+            text-align: center;
+            backdrop-filter: blur(14px);
+        }
+
+        .logo {
+            width: 124px;
+            height: 124px;
+            object-fit: cover;
+            border-radius: 30px;
+            box-shadow: 0 18px 42px rgba(185, 79, 114, 0.18);
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            margin-bottom: 16px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid var(--line);
+            color: #b55a7b;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        h1 {
+            margin: 0 0 14px;
+            font-family: "Noto Serif Hebrew", serif;
+            font-size: clamp(2rem, 4vw, 3.6rem);
+            line-height: 1.15;
+        }
+
+        .sub {
+            margin: 0 auto 18px;
+            max-width: 28ch;
+            color: var(--muted);
+            font-size: 22px;
+            line-height: 1.65;
+            font-weight: 700;
+        }
+
+        .order-box {
+            margin: 24px auto 18px;
+            max-width: 360px;
+            padding: 18px 20px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #fff8f2, #fffefb);
+            border: 1px solid #f0ddd1;
+        }
+
+        .order-box strong {
+            display: block;
+            margin-top: 6px;
+            color: var(--rose);
+            font-size: 30px;
+        }
+
+        .note {
+            margin: 0 auto;
+            max-width: 42ch;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 26px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 190px;
+            padding: 15px 22px;
+            border-radius: 18px;
+            text-decoration: none;
+            font-weight: 800;
+            transition: transform 0.2s ease;
+        }
+
+        .button.primary {
+            background: linear-gradient(135deg, var(--rose), var(--peach));
+            color: #fff;
+            box-shadow: 0 18px 34px rgba(212, 106, 140, 0.22);
+        }
+
+        .button.secondary {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--line);
+            color: var(--ink);
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <img class="logo" src="/form-assets/kranch-logo.jpg" alt="לוגו קראנץ">
+        <div class="eyebrow">ההזמנה נשמרה בהצלחה</div>
+        <h1>תודה שבחרת בנו :)</h1>
+        <p class="sub">בטוחות שתהיי מרוצה בעז"ה!</p>
+        <div class="order-box" id="orderBox" hidden>
+            מספר ההזמנה שלך
+            <strong id="orderNumber"></strong>
+        </div>
+        <p class="note" id="mailNote">
+            אם הוזנה כתובת מייל, יישלח אלייך גם סיכום הזמנה מעוצב עם כל הפרטים שנבחרו.
+        </p>
+        <div class="actions">
+            <a class="button primary" href="/order-form">להזמנה חדשה</a>
+            <a class="button secondary" href="/">חזרה לדף הראשי</a>
+        </div>
+    </main>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const orderNumber = params.get("orderNumber");
+        const hasEmail = params.get("hasEmail") === "1";
+        const orderBox = document.getElementById("orderBox");
+        const orderNumberEl = document.getElementById("orderNumber");
+        const mailNote = document.getElementById("mailNote");
+
+        if (orderNumber) {
+            orderNumberEl.textContent = orderNumber;
+            orderBox.hidden = false;
+        }
+
+        if (!hasEmail) {
+            mailNote.textContent = "אם תרצי בהמשך להוסיף כתובת מייל בגיליון ההזמנות, המערכת תוכל לשלוח משם את סיכום ההזמנה אוטומטית.";
+        }
+    </script>
+</body>
+</html>
