@@ -1,5 +1,5 @@
 // מרשם מרכזי של כל המלל המושמע בקו, ושמות קבצי האודיו התואמים בימות.
-// כל משפט קבוע מוקלט מראש בקול אמיתי (Gemini TTS, קול "Kore" בסגנון ילדה, 0.9x)
+// כל משפט קבוע מוקלט מראש בקול אמיתי (Gemini TTS, קול "Zephyr" בסגנון נערה עדין וחמים, 1.15x)
 // ומועלה לתיקיית ivr2:/0/tts בימות. בזמן שיחה משמיעים את הקובץ (type: 'file')
 // במקום ה-TTS הרובוטי של ימות (type: 'text').
 //
@@ -8,10 +8,11 @@
 // נתיב התיקייה בימות כפי שמצופה ב-type:'file' (ללא הקידומת ivr2: וללא סיומת .wav).
 const VOICE_DIR = '/0/tts';
 
-// ההגדרה המדויקת של האתר (magical-mermaid): סגנון קול ילדה + מודל Kore.
-const TTS_STYLE_INSTRUCTION = 'Say in a cheerful, sweet young Hebrew girl voice, friendly and lighthearted:';
-const TTS_VOICE = 'Kore';
-const TTS_SPEED = 0.9;
+// ההגדרה המדויקת של האתר (magical-mermaid) לפי התמונה: "קול נערה עדין וחמים" + מודל Zephyr, קצב 1.15x.
+// (הקצב באתר הוא playbackRate בדפדפן בלבד ולא נשלח ל-Gemini — לכן צורבים אותו כאן דרך ffmpeg atempo.)
+const TTS_STYLE_INSTRUCTION = 'Say in a gentle, warm Hebrew teenage girl voice:';
+const TTS_VOICE = 'Zephyr';
+const TTS_SPEED = 1.15;
 
 // כל המשפטים הקבועים: key -> טקסט עברי.
 const PROMPTS = {
