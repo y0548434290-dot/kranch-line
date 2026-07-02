@@ -701,7 +701,8 @@ function buildSummaryMessages(order) {
     messages.push(
         say('lbl_total'),
         { type: 'number', data: String(order.totalPrice || 0) },
-        say('lbl_shekels')
+        say('lbl_shekels'),
+        say('payment_cash_note')
     );
 
     messages.push(say('summary_approve'));
