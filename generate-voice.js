@@ -66,6 +66,8 @@ async function geminiTts(text, retry = 0) {
     const b64 = part?.inlineData?.data;
     const mime = part?.inlineData?.mimeType || 'audio/L16;rate=24000';
     if (!b64) {
+        // תקלה חולפת של Gemini על קלט קצר (finishReason: OTHER, בלי אודיו) — ננסה שוב.
+        if (retry < 6) { await delay(Math.pow(2, retry) * 1000); return geminiTts(text, retry + 1); }
         throw new Error('No audio returned from Gemini.');
     }
 
