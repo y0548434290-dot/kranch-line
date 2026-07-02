@@ -104,6 +104,7 @@ class OrdersSheetClient {
         this.emailSyncInProgress = false;
         this.emailStatePath = path.resolve(__dirname, '..', '..', 'logs', 'api-link-email-state.json');
         this.emailState = { sent: {} };
+        this.saveQueue = Promise.resolve();
     }
 
     async initialize() {
@@ -343,23 +344,96 @@ class OrdersSheetClient {
 
         this.prepareOrderForSave(order);
         const row = this.orderToRow(order);
-        const response = await this.appendSheetValues(`${SHEET_NAME}!A:A`, [row], {
-            valueInputOption: 'RAW',
-            insertDataOption: 'INSERT_ROWS'
-        });
+
+        // תור פנימי: המערכת רצה במופע יחיד (Render), כך ששתי שיחות שמסתיימות
+        // באותו רגע לא יחשבו את אותה שורת יעד וידרסו זו את זו.
+        const writeTask = this.saveQueue.then(() => this.writeOrderRowAtNextSlot(row));
+        this.saveQueue = writeTask.then(() => {}, () => {});
+        const updatedRange = await writeTask;
 
         await this.sendConfirmationIfNeeded(order, { source: 'new-order' });
         if (typeof this.afterSaveHook === 'function') {
             try {
                 await this.afterSaveHook({
                     order,
-                    updatedRange: response.updates?.updatedRange || null
+                    updatedRange
                 });
             } catch (error) {
                 console.error(`[transcription] afterSaveHook failed: ${error.message}`);
             }
         }
-        return response.updates?.updatedRange || null;
+        return updatedRange;
+    }
+
+    // כותב את השורה בשורה הריקה הראשונה אחרי גוש ההזמנות — לא ב-append של Google:
+    // זיהוי "סוף הטבלה" של append נמתח עד תחתית הגיליון כשעמודת הצ'קבוקסים
+    // ("שלחי צנתוק") מלאה ב-FALSE בכל השורות, ואז הזמנות חדשות נכתבו בשורה 1028.
+    async writeOrderRowAtNextSlot(row) {
+        const rowNumber = await this.findNextOrderRow();
+        await this.ensureSheetRowCapacity(rowNumber);
+
+        const range = `${SHEET_NAME}!A${rowNumber}:${this.columnLetter(this.headerCount - 1)}${rowNumber}`;
+        await this.updateSheetValues(range, [row], { valueInputOption: 'RAW' });
+        return range;
+    }
+
+    // השורה הריקה הראשונה נקבעת לפי עמודות מפתח שתמיד מלאות בהזמנה אמיתית,
+    // כך שערכי עזר בעמודות אחרות (צ'קבוקסים, סטטוסים) לא מזיזים את היעד.
+    async findNextOrderRow() {
+        const keyIndexes = ['createdAt', 'idNumber', 'email', 'orderNumber']
+            .map((key) => this.columnLayout.indexOf(key))
+            .filter((index) => index !== -1);
+
+        if (keyIndexes.length === 0) {
+            keyIndexes.push(0);
+        }
+
+        const endColumn = this.columnLetter(Math.max(...keyIndexes));
+        const response = await this.getSheetValues(`${SHEET_NAME}!A2:${endColumn}`);
+        const rows = response.values || [];
+
+        let lastDataRow = 1;
+        for (let index = rows.length - 1; index >= 0; index -= 1) {
+            const values = rows[index] || [];
+            if (keyIndexes.some((columnIndex) => String(values[columnIndex] || '').trim() !== '')) {
+                lastDataRow = index + 2;
+                break;
+            }
+        }
+
+        return lastDataRow + 1;
+    }
+
+    async ensureSheetRowCapacity(requiredRowCount) {
+        const metadata = await this.googleSheetsRequest('', {
+            query: {
+                fields: 'sheets(properties(sheetId,title,gridProperties(rowCount)))'
+            }
+        });
+        const sheet = (metadata.sheets || []).find((item) => item.properties?.title === SHEET_NAME);
+        if (!sheet) {
+            throw new Error(`Sheet "${SHEET_NAME}" was not found.`);
+        }
+
+        const currentRowCount = Number(sheet.properties?.gridProperties?.rowCount || 0);
+        if (currentRowCount >= requiredRowCount) {
+            return;
+        }
+
+        await this.googleSheetsRequest(':batchUpdate', {
+            method: 'POST',
+            body: {
+                requests: [
+                    {
+                        appendDimension: {
+                            sheetId: sheet.properties.sheetId,
+                            dimension: 'ROWS',
+                            length: requiredRowCount - currentRowCount
+                        }
+                    }
+                ]
+            }
+        });
     }
 
     prepareOrderForSave(order) {
