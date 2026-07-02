@@ -1,7 +1,7 @@
 const { GoogleAuth } = require('google-auth-library');
 const fs = require('fs');
 const path = require('path');
-const { ORDER_COLUMNS, RECORDING_TRANSCRIPTION_FIELDS } = require('./order-schema');
+const { ORDER_COLUMNS, RECORDING_TRANSCRIPTION_FIELDS, lastNameTranscriptionNeeded } = require('./order-schema');
 const { sendOrderConfirmationEmail } = require('./order-mailer');
 const { normalizeRecordingPath, looksLikeRecordingReference } = require('./yemot-recordings');
 const { isTzintukChecked } = require('./tzintuk-service');
@@ -569,6 +569,11 @@ class OrdersSheetClient {
     orderNeedsTranscription(order) {
         return Object.entries(RECORDING_TRANSCRIPTION_FIELDS).some(([recordingKey, fieldConfig]) => {
             if (!order[recordingKey] || !looksLikeRecordingReference(order[recordingKey])) {
+                return false;
+            }
+
+            // שם משפחה נכנס לתור התמלול רק כשהוא ההקלטה היחידה בהזמנה.
+            if (recordingKey === 'lastNameRecording' && !lastNameTranscriptionNeeded(order)) {
                 return false;
             }
 

@@ -3,7 +3,7 @@ const path = require('path');
 const { GoogleAuth } = require('google-auth-library');
 
 const { normalizeAudioForTranscription, transcribeWithWhisper } = require('./audio-utils');
-const { RECORDING_TRANSCRIPTION_FIELDS } = require('./order-schema');
+const { RECORDING_TRANSCRIPTION_FIELDS, lastNameTranscriptionNeeded } = require('./order-schema');
 const { downloadRecording } = require('./yemot-recordings');
 
 const GOOGLE_SPEECH_URL = 'https://speech.googleapis.com/v1p1beta1/speech:recognize';
@@ -187,6 +187,13 @@ class TranscriptionService {
             // אם כבר יש ערך כלשהו ב"בדיקה נדרשת" — ההקלטה כבר עובדה פעם אחת (כן/לא, או מספר ישן).
             // לא מתמללים שוב אוטומטית כדי לחסוך קריאות API. תמלול-מחדש ידני מאפס שדה זה.
             if (String(order[fieldConfig.needsReviewKey] || '').trim()) {
+                continue;
+            }
+
+            // שם משפחה מתומלל רק כשהוא ההקלטה היחידה בהזמנה; אחרת מסומן "לא נדרש"
+            // (הסימון גם מוציא את השורה מתור התמלול; ניקוי התא = תמלול ידני מחדש).
+            if (recordingKey === 'lastNameRecording' && !lastNameTranscriptionNeeded(order)) {
+                patch[fieldConfig.needsReviewKey] = 'לא נדרש';
                 continue;
             }
 

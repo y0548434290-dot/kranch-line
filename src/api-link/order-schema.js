@@ -1,3 +1,14 @@
+const { looksLikeRecordingReference } = require('./yemot-recordings');
+
+// תמלול הקלטת שם המשפחה נחוץ רק כשהיא ההקלטה היחידה בהזמנה:
+// כשיש הקלטת שם עברי / אותיות אנגלית / שם אנגלי — השם מגיע ממנה,
+// ותמלול שם המשפחה מיותר (חוסך קריאות תמלול ובדיקות צוות).
+const LASTNAME_SIBLING_RECORDING_KEYS = ['hebrewNameRecording', 'englishLettersRecording', 'englishNameRecording'];
+
+function lastNameTranscriptionNeeded(order) {
+    return !LASTNAME_SIBLING_RECORDING_KEYS.some((key) => looksLikeRecordingReference(order[key]));
+}
+
 const RECORDING_TRANSCRIPTION_FIELDS = {
     lastNameRecording: {
         transcriptKey: 'lastNameRecordingTranscript',
@@ -168,6 +179,7 @@ function buildOrderSummaryText(order) {
 module.exports = {
     ORDER_COLUMNS,
     RECORDING_TRANSCRIPTION_FIELDS,
+    lastNameTranscriptionNeeded,
     CITY_NAMES,
     AREA_NAMES,
     buildPickupLabel,
