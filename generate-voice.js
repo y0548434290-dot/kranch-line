@@ -54,7 +54,10 @@ async function geminiTts(text, retry = 0) {
     }
 
     if (response.status === 429 || response.status >= 500) {
-        if (retry < 5) { await delay(Math.pow(2, retry) * 1000); return geminiTts(text, retry + 1); }
+        // NO_429_RETRY: כשמריצים דרך מתזמר שמסובב מפתחות, עדיף להיכשל מיד על 429
+        // (המתזמר עובר למפתח הבא) במקום לבזבז backoff על מפתח שמכסתו נגמרה.
+        const failFast = process.env.NO_429_RETRY && response.status === 429;
+        if (!failFast && retry < 5) { await delay(Math.pow(2, retry) * 1000); return geminiTts(text, retry + 1); }
     }
 
     const data = await response.json();

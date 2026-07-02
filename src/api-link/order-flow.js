@@ -18,6 +18,9 @@ async function handleOrderCall(call, sheets) {
         status: 'ההזמנה התקבלה'
     };
 
+    // פתיח שלוחה 3.1 — מושמע לפני הכל: להכין מראש דגם/ת"ז/איות שם ולהמתין לאישור הסופי
+    await call.id_list_message([say('order_intro')]);
+
     order.enteredPhone = await readConfirmedDigits(call, {
         prompt: say('ask_phone'),
         confirmLabel: say('confirm_phone'),
