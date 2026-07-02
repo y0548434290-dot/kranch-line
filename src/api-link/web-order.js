@@ -85,7 +85,7 @@ function createWebOrder(payload) {
         englishNameRecording: String(payload.englishNameText || '').trim(),
         englishFont: String(payload.englishFont || '').trim(),
         orderSource: 'טופס ממוחשב',
-        status: 'מוזמן'
+        status: 'ההזמנה התקבלה'
     };
 
     order.productsSummary = buildProductsSummary(order);

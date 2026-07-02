@@ -15,7 +15,7 @@ async function handleOrderCall(call, sheets) {
         callerPhone: call.phone || '',
         email: '',
         orderSource: 'הזמנה טלפונית',
-        status: 'מוזמן'
+        status: 'ההזמנה התקבלה'
     };
 
     order.enteredPhone = await readConfirmedDigits(call, {
@@ -414,13 +414,9 @@ async function handleStatusCall(call, sheets) {
 
     // ערך הסטטוס עצמו מגיע מהגיליון (טקסט חופשי שמשתנה לפי מה שמקלידים),
     // ולכן הוא מושמע ב-TTS של ימות. שאר המלל בקו הוא אודיו אמיתי מוקלט מראש.
-    // הסטטוס ההתחלתי "מוזמן" מושמע כ"ההזמנה התקבלה" (הגיליון נשאר "מוזמן" למעקב);
-    // סטטוסים אחרים שמעדכנים ידנית מושמעים כפי שהם.
-    const STATUS_SPEECH = { 'מוזמן': 'ההזמנה התקבלה', 'הוזמן': 'ההזמנה התקבלה' };
-    const spokenStatus = STATUS_SPEECH[String(order.status || '').trim()] || order.status || 'לא ידוע';
     await call.id_list_message([
         say('status_your_status'),
-        { type: 'text', data: spokenStatus }
+        { type: 'text', data: order.status || 'לא ידוע' }
     ], {
         prependToNextAction: true
     });
