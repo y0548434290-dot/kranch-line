@@ -140,6 +140,12 @@ class TzintukService {
                     continue;
                 }
 
+                // נרמול הסימון לבוליאני: סימון מוקלד (V / "TRUE" כטקסט) נקלט אבל מוצג
+                // בגיליון כמילה במקום תיבה מסומנת — כתיבה חוזרת כבוליאני מיישרת את התצוגה.
+                await this.sheets.updateOrderCell(rowNumber, 'tzintukRequested', true).catch((error) => {
+                    console.error(`[tzintuk] Failed to normalize checkbox for row ${rowNumber}: ${error.message}`);
+                });
+
                 if (!phoneKey || phoneKey.length < 8 || phoneKey.length > 9) {
                     await this.writeStatus(rowNumber, `${STATUS_ERROR_PREFIX}: מספר טלפון לא תקין`);
                     continue;
