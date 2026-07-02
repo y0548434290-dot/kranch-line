@@ -83,7 +83,10 @@ const ORDER_COLUMNS = [
     { key: 'hasEnglishLetters', header: 'יש אנגלית בדוגמה' },
     { key: 'wantsEnglishName', header: 'שם אישי לאנגלית' },
     { key: 'lastNameRecording', header: 'הקלטת שם משפחה' },
-    { key: 'lastNameRecordingNeedsReview', header: 'בדיקה נדרשת שם משפחה' }
+    { key: 'lastNameRecordingNeedsReview', header: 'בדיקה נדרשת שם משפחה' },
+    // צנתוקים — סימון ✓ שולח צנתוק ללקוח; הסטטוס מנוהל ע"י tzintuk-service
+    { key: 'tzintukRequested', header: 'שלחי צנתוק' },
+    { key: 'tzintukStatus', header: 'סטטוס צנתוק' }
 ];
 
 const CITY_NAMES = {

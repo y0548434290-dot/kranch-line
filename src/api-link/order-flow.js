@@ -425,6 +425,55 @@ async function handleStatusCall(call, sheets) {
     return call.hangup();
 }
 
+// שער הכניסה של הקו (שורש ext.ini מפנה לכאן): אם למתקשרת יש הודעה ממתינה
+// (קיבלה צנתוק וטרם שמעה) — משמיעים את סטטוס ההזמנה שלה עם אפשרות חזרה,
+// ואז ממשיכים לתפריט הראשי. לכל השאר — מעבר מיידי ושקוף לתפריט /0.
+async function handleEntryCall(call, sheets, tzintuk) {
+    const rowNumber = tzintuk.getPendingRow(call.phone); // מתקשרת חסויה/לא מוכרת → null
+    if (!rowNumber) {
+        return call.go_to_folder('/0');
+    }
+
+    // קריאה טרייה של תא הסטטוס — ההודעה היא מה שכתוב בגיליון ברגע השיחה.
+    let statusText = '';
+    try {
+        const orders = await sheets.listOrdersWithRowNumbers();
+        const order = orders.find((item) => item._rowNumber === rowNumber);
+        statusText = String(order?.status || '').trim();
+    } catch (error) {
+        console.error(`[tzintuk] Entry status lookup failed: ${error.message}`);
+        return call.go_to_folder('/0'); // תקלת גיליון לא חוסמת את הכניסה לקו
+    }
+
+    // מסמנים "הושמע" כבר עכשיו — גם ניתוק באמצע לא ישאיר את ההודעה תקועה בלולאה.
+    tzintuk.markDelivered(call.phone).catch((error) => {
+        console.error(`[tzintuk] markDelivered failed: ${error.message}`);
+    });
+
+    // ערך הסטטוס הוא טקסט חופשי מהגיליון ולכן מושמע ב-TTS של ימות (כמו בשלוחת הסטטוס).
+    const messages = statusText
+        ? [say('tzintuk_intro'), say('status_your_status'), { type: 'text', data: statusText }]
+        : [say('tzintuk_intro'), say('tzintuk_no_status')];
+
+    while (true) {
+        const choice = await call.read([...messages, say('tzintuk_repeat_menu')], 'tap', {
+            max_digits: 1,
+            min_digits: 1,
+            sec_wait: 10,
+            digits_allowed: ['1', '2'],
+            typing_playback_mode: 'No',
+            allow_empty: true,
+            empty_val: '2'
+        });
+
+        if (String(choice) !== '1') {
+            break; // 2 או שתיקה → לתפריט הראשי
+        }
+    }
+
+    return call.go_to_folder('/0');
+}
+
 async function readConfirmedDigits(call, { prompt, confirmLabel, options, playbackType = 'digits' }) {
     while (true) {
         const rawValue = await call.read([prompt], 'tap', {
@@ -679,5 +728,6 @@ function nowInIsrael() {
 
 module.exports = {
     handleOrderCall,
-    handleStatusCall
+    handleStatusCall,
+    handleEntryCall
 };

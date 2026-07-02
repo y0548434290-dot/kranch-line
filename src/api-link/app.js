@@ -4,10 +4,11 @@ const path = require('path');
 const { YemotRouter } = require('yemot-router2');
 
 const OrdersSheetClient = require('./sheets-client');
-const { handleOrderCall, handleStatusCall } = require('./order-flow');
+const { handleOrderCall, handleStatusCall, handleEntryCall } = require('./order-flow');
 const { validateWebOrder, createWebOrder } = require('./web-order');
 const { downloadRecording } = require('./yemot-recordings');
 const TranscriptionService = require('./transcription-service');
+const TzintukService = require('./tzintuk-service');
 
 let appPromise = null;
 
@@ -19,6 +20,7 @@ async function createApiLinkApp() {
 
     const sheets = new OrdersSheetClient();
     await sheets.initialize();
+    const tzintuk = new TzintukService(sheets);
     const transcriptionService = new TranscriptionService();
     let transcriptionInProgress = false;
 
@@ -70,6 +72,10 @@ async function createApiLinkApp() {
         sheets.startEmailSync();
     }
 
+    if (!process.env.VERCEL && process.env.API_LINK_ENABLE_TZINTUK !== 'no') {
+        tzintuk.start(Number(process.env.API_LINK_TZINTUK_POLL_MS || 40000));
+    }
+
     if (!process.env.VERCEL && process.env.API_LINK_ENABLE_TRANSCRIPTION_SYNC !== 'no') {
         const transcriptionIntervalMs = Number(process.env.API_LINK_TRANSCRIPTION_SYNC_INTERVAL_MS || 120000);
         setInterval(() => {
@@ -107,6 +113,7 @@ async function createApiLinkApp() {
         console.log(`[server] Call ended ${call.callId}`);
     });
 
+    router.all('/entry', async (call) => handleEntryCall(call, sheets, tzintuk));
     router.all('/order', async (call) => handleOrderCall(call, sheets));
     router.all('/status', async (call) => handleStatusCall(call, sheets));
 

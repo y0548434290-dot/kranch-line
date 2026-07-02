@@ -118,7 +118,12 @@ const PROMPTS = {
     confirm_status_order: 'מספר ההזמנה שנקלט הוא',
     status_not_found: 'הזמנה זו לא נמצאה במערכת',
     status_checking: 'המערכת בודקת את סטטוס ההזמנה שלך',
-    status_your_status: 'סטטוס ההזמנה שלך'
+    status_your_status: 'סטטוס ההזמנה שלך',
+
+    // הודעה ממתינה למי שקיבלה צנתוק וחוזרת לקו (שער הכניסה /yemot/entry)
+    tzintuk_intro: 'שלום! יש עבורך עדכון על ההזמנה שלך',
+    tzintuk_no_status: 'ההזמנה שלך התקבלה ונמצאת בטיפול',
+    tzintuk_repeat_menu: 'לחזרה על ההודעה הקישי 1, למעבר לתפריט הראשי הקישי 2'
 };
 
 // ערים (להשמעה באישור המוקד ובסיכום). תואם CITY_NAMES ב-order-schema.

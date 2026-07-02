@@ -470,6 +470,22 @@ class OrdersSheetClient {
         return range;
     }
 
+    // כתיבת תא בודד לפי מפתח עמודה — בלי לשכתב את כל השורה,
+    // כדי לא לדרוס עריכה ידנית שמתבצעת בגיליון באותו רגע.
+    async updateOrderCell(rowNumber, key, value) {
+        this.assertInitialized();
+
+        const index = this.columnLayout.indexOf(key);
+        if (index === -1) {
+            throw new Error(`Unknown column key: ${key}`);
+        }
+
+        const column = this.columnLetter(index);
+        const range = `${SHEET_NAME}!${column}${rowNumber}`;
+        await this.updateSheetValues(range, [[this.formatCellValue(key, value)]], { valueInputOption: 'RAW' });
+        return range;
+    }
+
     async getPendingTranscriptionOrders(limit = 10) {
         const orders = await this.listOrdersWithRowNumbers();
         return orders.filter((order) => this.orderNeedsTranscription(order)).slice(0, limit);
@@ -669,6 +685,12 @@ class OrdersSheetClient {
     }
 
     formatCellValue(key, value) {
+        // תא צ'קבוקס בגיליון חייב לקבל בוליאני אמיתי (לא המחרוזת "TRUE") —
+        // אחרת שכתוב-שורה מלא (updateOrderFields) הופך אותו לטקסט ושובר את התיבה.
+        if (key === 'tzintukRequested') {
+            return value === true || /^true$/i.test(String(value).trim());
+        }
+
         if (!this.isRecordingField(key)) {
             return value;
         }
