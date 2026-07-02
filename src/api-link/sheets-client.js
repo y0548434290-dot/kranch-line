@@ -396,8 +396,17 @@ class OrdersSheetClient {
     async findOrderByNumber(orderNumber) {
         this.assertInitialized();
 
+        // השוואה חסינה: משאירים רק ספרות ומורידים אפסים מובילים, כדי שמספר הזמנה
+        // שנשמר בלי אפס מוביל (למשל "20732216") יימצא גם כשהמתקשרת מקישה את המלא
+        // ("020732216"), ולהיפך. שלוחת הסטטוס דורשת לפחות 6 ספרות, אז אין התאמות ריקות.
+        const normalize = (value) => String(value == null ? '' : value).replace(/\D/g, '').replace(/^0+/, '');
+        const target = normalize(orderNumber);
+        if (!target) {
+            return null;
+        }
+
         const orders = await this.listOrders();
-        return orders.find((order) => order.orderNumber === orderNumber) || null;
+        return orders.find((order) => normalize(order.orderNumber) === target) || null;
     }
 
     async listOrders() {
