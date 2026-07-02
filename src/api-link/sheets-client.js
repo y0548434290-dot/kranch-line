@@ -4,6 +4,7 @@ const path = require('path');
 const { ORDER_COLUMNS, RECORDING_TRANSCRIPTION_FIELDS } = require('./order-schema');
 const { sendOrderConfirmationEmail } = require('./order-mailer');
 const { normalizeRecordingPath, looksLikeRecordingReference } = require('./yemot-recordings');
+const { isTzintukChecked } = require('./tzintuk-service');
 
 const SHEET_NAME = 'הזמנות';
 
@@ -687,8 +688,9 @@ class OrdersSheetClient {
     formatCellValue(key, value) {
         // תא צ'קבוקס בגיליון חייב לקבל בוליאני אמיתי (לא המחרוזת "TRUE") —
         // אחרת שכתוב-שורה מלא (updateOrderFields) הופך אותו לטקסט ושובר את התיבה.
+        // מזהה גם סימונים מוקלדים (V, וי, כן) באותה לוגיקה של שירות הצנתוקים.
         if (key === 'tzintukRequested') {
-            return value === true || /^true$/i.test(String(value).trim());
+            return isTzintukChecked(value);
         }
 
         if (!this.isRecordingField(key)) {

@@ -1,5 +1,17 @@
 const { yemotJsonRequest } = require('./yemot-recordings');
 
+// מקבל גם סימונים מוקלטים ידנית בגיליון (V, וי, כן, 1) ולא רק קליק על הצ'קבוקס (TRUE),
+// כי האימות בעמודה הוגדר strict:false כדי שהקלדה לא תיחסם בשגיאת ולידציה.
+const CHECKED_VALUES = new Set(['true', 'v', '✓', '√', 'וי', 'כן', 'yes', '1', 'x']);
+
+function isTzintukChecked(value) {
+    if (value === true) {
+        return true;
+    }
+
+    return CHECKED_VALUES.has(String(value || '').trim().toLowerCase());
+}
+
 // שירות הצנתוקים: סורק את גיליון "הזמנות" לשורות שסומנו בעמודת "שלחי צנתוק",
 // שולח צנתוק (RunTzintuk) לטלפון של ההזמנה, ומנהל מפת "הודעות ממתינות" בזיכרון
 // שממנה שער הכניסה (/yemot/entry) מזהה לקוח שחוזר לקו.
@@ -32,7 +44,7 @@ class TzintukService {
     }
 
     isChecked(value) {
-        return value === true || /^true$/i.test(String(value || '').trim());
+        return isTzintukChecked(value);
     }
 
     async sendTzintuk(phone) {
@@ -194,3 +206,4 @@ function nowInIsrael() {
 }
 
 module.exports = TzintukService;
+module.exports.isTzintukChecked = isTzintukChecked;
