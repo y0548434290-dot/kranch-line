@@ -1,12 +1,8 @@
-const { looksLikeRecordingReference } = require('./yemot-recordings');
-
-// תמלול הקלטת שם המשפחה נחוץ רק כשהיא ההקלטה היחידה בהזמנה:
-// כשיש הקלטת שם עברי / אותיות אנגלית / שם אנגלי — השם מגיע ממנה,
-// ותמלול שם המשפחה מיותר (חוסך קריאות תמלול ובדיקות צוות).
-const LASTNAME_SIBLING_RECORDING_KEYS = ['hebrewNameRecording', 'englishLettersRecording', 'englishNameRecording'];
-
+// הקלטת שם המשפחה מתומללת תמיד — בכל הזמנה, גם כשיש הקלטות נוספות
+// (שם עברי / אותיות אנגלית / שם אנגלי). לבקשת הלקוחה (2026-07-03) הוסר
+// הסינון הקודם שדילג על התמלול כשהיו הקלטות אחיות.
 function lastNameTranscriptionNeeded(order) {
-    return !LASTNAME_SIBLING_RECORDING_KEYS.some((key) => looksLikeRecordingReference(order[key]));
+    return true;
 }
 
 const RECORDING_TRANSCRIPTION_FIELDS = {
