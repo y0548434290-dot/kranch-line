@@ -81,7 +81,7 @@ async function handleOrderCall(call, sheets) {
             max_digits: 1,
             min_digits: 1,
             sec_wait: 20,
-            digits_allowed: ['1', '2', '3', '4', '5', '6', '7', '8'],
+            digits_allowed: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
             typing_playback_mode: 'No'
         });
 
